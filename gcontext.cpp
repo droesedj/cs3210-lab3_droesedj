@@ -16,95 +16,111 @@ GraphicsContext::~GraphicsContext()
 }
 
 
-/* This is a naive implementation that uses floating-point math
- * and "setPixel" which will need to be provided by the concrete
- * implementation.
- * 
- * Parameters:
- * 	x0, y0 - origin of line
- *  x1, y1 - end of line
- * 
- * Returns: void
+/**
+ * Integer math implementation of Bresenham's line algorithm.
+ * @param x0 Starting X-coordinate
+ * @param y0 Starting Y-coordinate
+ * @param x1 Ending X-coordinate
+ * @param y1 Ending Y-coordinate
  */
 void GraphicsContext::drawLine(int x0, int y0, int x1, int y1)
 {
 	
 	// find slope
-	int dx = x1-x0;
-	int dy = y1-y0;
+
+	/// Change in Y
+	int dy = y1 - y0;
+
+	/// Change in X
+	int dx = x1 - x0;
+
+	/// y iteration size
+	int yi = 1;
+
+	/// x iteration size
+	int xi = 1;
+
+	// downward slope, flip dy, set iterator to negative.
+	if(dy < 0){
+		yi = -1;
+		dy = -dy;
+	}
+
+	// downward slope, flip dx, set iterator to negative.
+	if(dx < 0){
+		xi = -1;
+		dx = -dx;
+	}
+
+	int y = y0;
+	int x = x0;
+
+	// Determine which length is larger, use that one in the loop.
+	if(dy < dx){
+		int D = (2*dy) - dx;
+		for(x = x0; x != x1; x += xi){
+			setPixel(x,y);
+			if(D > 0) {
+				y = y + yi;
+				D = D - (2*dx);
+			}
+			D = D + (2*dy);
+		}
+	} else {
+		int D = (2*dx) - dy;
+		for(y = y0; y != y1; y += yi){
+			setPixel(x,y);
+			if(D > 0) {
+				x = x + xi;
+				D = D - (2*dy);
+			}
+			D = D + (2*dx);
+		}
+	}
+
 	
-	// make sure we actually have a line
-	if (dx != 0 || dy !=0)
-	{
-		// slope < 1?
-		if (std::abs(dx)>std::abs(dy))
-		{	// iterate over x
-			double slope = (double)dy/dx;
-			
-			// x increment - need to know which way to go
-			int incx = std::abs(dx)/dx;  // will be 1 or -1
-			
-			for (int x = x0; x != x1; x += incx)
-			{
-				setPixel(x,y0+slope*(x-x0));
-			}
-			
-			// loop ends on iteration early - catch endpoint
-			setPixel(x1,y1);
-		} // end of if |slope| < 1 
-		else 
-		{	// iterate over y
-			double slope = (double)dx/dy;
-			
-			// x increment - need to know which way to go
-			int incy = std::abs(dy)/dy;  // will be 1 or -1
-			
-			for (int y = y0; y != y1; y += incy)
-			{
-				setPixel(x0+slope*(y-y0),y);
-			}
-			
-			// loop ends on iteration early - catch endpoint
-			setPixel(x1,y1);
-		} // end of else |slope| >= 1
-	} // end of if it is a real line (dx!=0 || dy !=0)
 	return;
 }
 
 
 
-/* This is a naive implementation that uses floating-point math
- * and "setPixel" which will need to be provided by the concrete
- * implementation.
- * 
- * Parameters:
- * 	x0, y0 - origin/center of circle
- *  radius - radius of circle
- * 
- * Returns: void
+/**
+ * Draws a circle using Bresenham's midpoint circle algorithm.
+ * @param x0 X-axis center point of the circle
+ * @param y0 Y-axis center point of the circle
+ * @param radius radius of the circle in pixels.
  */
 void GraphicsContext::drawCircle(int x0, int y0, unsigned int radius)
 {
-	// This is a naive implementation that draws many line
-	// segments.  Also uses floating point math for poor performance
+	/// Start at 0 degrees on the edge of the circle.
+	int x = radius;
 
-	// also, large circles will be "jagged"
+	int y = 0;
+
+	/// Radius error.
+	int err = 0;
 	
-	// start at 0 degrees
-	int oldx = radius;
-	int oldy = 0;
+	while(x >= y){
 
-	// go from 1 to 360 degrees
-	for (int segment =1; segment<=360; segment += 1)
-	{
-		int newx = std::cos(segment*M_PI/180)*radius;
-		int newy = std::sin(segment*M_PI/180)*radius;
+		// Set the pixel for all 8 octants.
+		setPixel(x0 + x, y0 + y);
+		setPixel(x0 + y, y0 + x);
+		setPixel(x0 - y, y0 + x);
+		setPixel(x0 - x, y0 + y);
+		setPixel(x0 - x, y0 - y);
+		setPixel(x0 - y, y0 - x);
+		setPixel(x0 + y, y0 - x);
+		setPixel(x0 + x, y0 - y);
 
-		// hit four quadrants
-		drawLine(x0+oldx,y0+oldy,x0+newx,y0+newy);
+		// Radius error handling/rounding.
+		if(err <= 0){
+			y += 1;
+			err += (2*y) + 1;
+		} else if(err > 0){
+			x -= 1;
+			err -= (2*x) + 1;
+		}
 		
-		oldx = newx;
-		oldy = newy;
 		
 	}
 	

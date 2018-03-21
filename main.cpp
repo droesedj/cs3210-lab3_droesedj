@@ -20,7 +20,16 @@ int main(void)
 	gc->drawLine(500,100,100,100);
 	gc->setColor(GraphicsContext::MAGENTA);
 	gc->drawCircle(300,300,200);
-	sleep(5);
+
+	// New tests below this line.
+
+	// Line from outside the bounds.
+	gc->drawLine(-200,-200,200,200);
+
+	// circle from outside the bounds
+	gc->drawCircle(12,-30,100);
+
+	sleep(8);
  
 	delete gc;
  
