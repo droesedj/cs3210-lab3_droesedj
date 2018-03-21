@@ -1,3 +1,15 @@
+/**LAB WEEK 3: LINES + CIRCLES
+ * CS3210
+ * @author Dennis Droese
+ * @file main.cpp
+ * @date March 21, 2018
+ */
+
+/*
+ * A simple test for drawing lines + circles.
+ */
+
+
 #include "x11context.h"
 #include <unistd.h>
 #include <iostream>
@@ -28,6 +40,12 @@ int main(void)
 
 	// circle from outside the bounds
 	gc->drawCircle(12,-30,100);
+
+	// line that is actually just a point.
+	gc->drawLine(40,20,40,20);
+
+	// circle with a radius of 0.  Should not draw.
+	gc->drawCircle(40,30,0);
 
 	sleep(8);
  

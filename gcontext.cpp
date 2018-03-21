@@ -1,9 +1,15 @@
+/**LAB WEEK 3: LINES + CIRCLES
+ * CS3210
+ * @author Dennis Droese
+ * @file gcontext.cpp
+ * @date March 21, 2018
+ */
+
+
 /* This is an abstract base class representing a generic graphics
  * context.  Most implementation specifics will need to be provided by
  * a concrete implementation.  See header file for specifics. */
 
-#define _USE_MATH_DEFINES	// for M_PI
-#include <cmath>	// for trig functions
 #include "gcontext.h"	
 
 /*
@@ -25,14 +31,17 @@ GraphicsContext::~GraphicsContext()
  */
 void GraphicsContext::drawLine(int x0, int y0, int x1, int y1)
 {
-	
-	// find slope
-
 	/// Change in Y
 	int dy = y1 - y0;
 
 	/// Change in X
 	int dx = x1 - x0;
+
+	// If both coordinates are the same, just draw a single pixel.
+	if(dx == 0 && dy == 0){
+		setPixel(x0,y0);
+		return;
+	}
 
 	/// y iteration size
 	int yi = 1;
@@ -77,8 +86,6 @@ void GraphicsContext::drawLine(int x0, int y0, int x1, int y1)
 			D = D + (2*dx);
 		}
 	}
-
-	
 	return;
 }
 
@@ -92,6 +99,11 @@ void GraphicsContext::drawLine(int x0, int y0, int x1, int y1)
  */
 void GraphicsContext::drawCircle(int x0, int y0, unsigned int radius)
 {
+	// If the radius is 0, don't draw anything.
+	if(radius == 0){
+		return;
+	}
+
 	/// Start at 0 degrees on the edge of the circle.
 	int x = radius;
 
@@ -120,10 +132,7 @@ void GraphicsContext::drawCircle(int x0, int y0, unsigned int radius)
 			x -= 1;
 			err -= (2*x) + 1;
 		}
-		
-		
 	}
-	
 	return;	
 }
 
