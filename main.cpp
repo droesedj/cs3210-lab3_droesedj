@@ -47,6 +47,18 @@ int main(void)
 	// circle with a radius of 0.  Should not draw.
 	gc->drawCircle(40,30,0);
 
+
+	// Draw something "interesting"
+
+	for(int i = 0; i < 800; i++){
+
+		gc->drawLine(700,300,0,i*2);
+
+		gc->setColor(8885784579*i);
+		gc->drawCircle(700,300,i);
+	}
+
+
 	sleep(8);
  
 	delete gc;
